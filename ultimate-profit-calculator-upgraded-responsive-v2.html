@@ -1,0 +1,1594 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Ultimate Profit Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Georgia&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root {
+  --bg:       #faf7f2;
+  --bg2:      #f3efe8;
+  --bg3:      #ede8df;
+  --surface:  #ffffff;
+  --border:   #ddd8ce;
+  --border2:  #c8c2b6;
+  --text:     #1a1612;
+  --muted:    #7a7268;
+  --faint:    #b8b2a8;
+  --accent:   #b85c2a;
+  --accent2:  #9a4a20;
+  --accent-bg:#fdf0e8;
+  --green:    #2e7d52;
+  --green-bg: #eaf4ee;
+  --red:      #b83232;
+  --red-bg:   #fdeaea;
+  --amber:    #a06010;
+  --amber-bg: #fef6e4;
+  --serif:    'EB Garamond', Georgia, serif;
+  --mono:     'IBM Plex Mono', monospace;
+  --sans:     Georgia, serif;
+  --r:        8px;
+  --r2:       12px;
+  --shadow:   0 1px 4px rgba(26,22,18,0.07);
+  --shadow2:  0 2px 12px rgba(26,22,18,0.1);
+}
+
+[data-theme="dark"] {
+  --bg:       #100e0b;
+  --bg2:      #181510;
+  --bg3:      #201d18;
+  --surface:  #241f19;
+  --border:   #332d25;
+  --border2:  #4a4238;
+  --text:     #ede6da;
+  --muted:    #8a8070;
+  --faint:    #4a4238;
+  --accent:   #d4784a;
+  --accent2:  #e8905c;
+  --accent-bg:#2a1e14;
+  --green:    #3aaa6a;
+  --green-bg: #0e2018;
+  --red:      #d45050;
+  --red-bg:   #220e0e;
+  --amber:    #c88030;
+  --amber-bg: #201608;
+  --shadow:   0 1px 4px rgba(0,0,0,0.3);
+  --shadow2:  0 2px 12px rgba(0,0,0,0.4);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--serif);
+  font-size: 16px;
+  line-height: 1.7;
+  min-height: 100vh;
+  transition: background .3s, color .3s;
+}
+
+/* ── NAV ── */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 52px;
+  transition: background .3s;
+}
+.nav-brand {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: .06em;
+  color: var(--muted);
+  text-decoration: none;
+}
+.nav-brand span { color: var(--accent); }
+.nav-right { display: flex; align-items: center; gap: 1.5rem; }
+.nav-link {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .06em;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color .15s;
+}
+.nav-link:hover { color: var(--accent); }
+.theme-btn {
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid var(--border2);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all .15s;
+}
+.theme-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── LAYOUT ── */
+.wrap {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 3rem 2rem 6rem;
+}
+
+/* ── HERO ── */
+.hero {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto 3.5rem;
+  padding-bottom: 3rem;
+  border-bottom: 1px solid var(--border);
+}
+.hero-eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1rem;
+}
+h1 {
+  font-family: var(--serif);
+  font-size: clamp(36px, 6vw, 64px);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -.01em;
+  margin-bottom: 1rem;
+}
+h1 em { font-style: italic; color: var(--accent); }
+.hero-sub {
+  font-size: 17px;
+  color: var(--muted);
+  line-height: 1.6;
+  font-family: var(--serif);
+  max-width: 520px;
+  margin: 0 auto 2rem;
+}
+
+/* ── REVENUE BAR ── */
+.rev-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 1.25rem 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r2);
+  box-shadow: var(--shadow);
+}
+.rev-label {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.rev-input-wrap {
+  display: flex;
+  align-items: center;
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  overflow: hidden;
+}
+.rev-prefix {
+  font-family: var(--mono);
+  font-size: 20px;
+  padding: 8px 12px;
+  color: var(--muted);
+  border-right: 1px solid var(--border);
+  background: var(--bg3);
+}
+#revenueInput {
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--mono);
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--text);
+  padding: 8px 12px;
+  width: 150px;
+  text-align: right;
+}
+#periodSel {
+  padding: 8px 12px;
+  background: var(--bg3);
+  border: none;
+  border-left: 1px solid var(--border);
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+}
+#periodSel option { background: var(--surface); }
+
+/* ── SECTION TITLES ── */
+.section-head {
+  margin-bottom: 1.25rem;
+  padding-bottom: .75rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.section-title {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--text);
+}
+.section-sub {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .08em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+/* ── CATEGORY TABS ── */
+.cat-scroll { overflow-x: auto; scrollbar-width: none; margin-bottom: 1rem; }
+.cat-scroll::-webkit-scrollbar { display: none; }
+.cats { display: flex; gap: 6px; width: max-content; }
+.cat-btn {
+  padding: 5px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border2);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .04em;
+  cursor: pointer;
+  background: transparent;
+  color: var(--muted);
+  white-space: nowrap;
+  transition: all .15s;
+}
+.cat-btn:hover { border-color: var(--accent); color: var(--accent); }
+.cat-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+/* ── MODEL GRID ── */
+.model-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 8px;
+  margin-bottom: 2.5rem;
+}
+.model-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 14px;
+  cursor: pointer;
+  transition: all .15s;
+  position: relative;
+}
+.model-card:hover { border-color: var(--accent); box-shadow: var(--shadow); transform: translateY(-1px); }
+.model-card.active { border-color: var(--accent); background: var(--accent-bg); box-shadow: var(--shadow2); }
+.mc-icon { font-size: 18px; margin-bottom: 6px; display: block; }
+.mc-name { font-family: var(--mono); font-size: 12px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+.mc-desc { font-size: 12px; color: var(--muted); font-family: var(--mono); line-height: 1.4; }
+.mc-badge {
+  position: absolute; top: 8px; right: 8px;
+  font-family: var(--mono); font-size: 9px;
+  padding: 2px 5px; border-radius: 3px; font-weight: 500;
+}
+.mc-badge.high { background: var(--green-bg); color: var(--green); }
+.mc-badge.med  { background: var(--amber-bg); color: var(--amber); }
+.mc-badge.low  { background: var(--red-bg);   color: var(--red);   }
+
+/* ── MAIN GRID ── */
+.main-grid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 20px;
+  align-items: start;
+  margin-bottom: 3rem;
+}
+@media(max-width:860px){ .main-grid { grid-template-columns: 1fr; } }
+
+/* ── PANEL ── */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r2);
+  padding: 20px 22px;
+  box-shadow: var(--shadow);
+}
+.panel-hdr {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.panel-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.btn-ghost {
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 5px;
+  border: 1px solid var(--border2);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all .15s;
+}
+.btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── COST ROWS ── */
+.cost-items { display: flex; flex-direction: column; gap: 2px; margin-bottom: 12px; }
+.cost-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  gap: 8px;
+  align-items: center;
+  padding: 7px 8px;
+  border-radius: 6px;
+  transition: background .12s;
+}
+.cost-row:hover { background: var(--bg2); }
+.cost-name-input {
+  background: transparent; border: none; outline: none;
+  font-family: var(--serif); font-size: 14px; color: var(--text); width: 100%; min-width: 0;
+}
+.cost-name-input::placeholder { color: var(--faint); }
+.cost-type-sel {
+  font-family: var(--mono); font-size: 10px; padding: 3px 6px;
+  border-radius: 4px; background: var(--bg2); border: 1px solid var(--border);
+  color: var(--muted); cursor: pointer; appearance: none; -webkit-appearance: none; outline: none;
+}
+.cost-type-sel option { background: var(--surface); }
+.cost-val-wrap {
+  display: flex; align-items: center; gap: 2px;
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; padding: 4px 8px;
+}
+.cost-val {
+  background: transparent; border: none; outline: none;
+  font-family: var(--mono); font-size: 13px; color: var(--text); width: 52px; text-align: right;
+}
+.cost-sym { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.del-btn {
+  background: transparent; border: none; cursor: pointer;
+  color: var(--faint); font-size: 18px; line-height: 1; padding: 2px 4px;
+  border-radius: 4px; transition: color .15s;
+}
+.del-btn:hover { color: var(--red); }
+.add-row { display: flex; gap: 8px; margin-top: 10px; }
+.add-row input {
+  flex: 1; background: var(--bg2); border: 1px solid var(--border); border-radius: 7px;
+  padding: 8px 12px; font-family: var(--serif); font-size: 14px; color: var(--text);
+  outline: none; transition: border-color .15s;
+}
+.add-row input:focus { border-color: var(--accent); }
+.add-row input::placeholder { color: var(--faint); }
+.add-type {
+  padding: 8px 10px; background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 7px; font-family: var(--mono); font-size: 12px; color: var(--muted);
+  cursor: pointer; appearance: none; -webkit-appearance: none; outline: none;
+}
+.add-type option { background: var(--surface); }
+.btn-add {
+  padding: 8px 14px; background: var(--accent); border: none;
+  border-radius: 7px; font-family: var(--mono); font-size: 12px;
+  color: #fff; cursor: pointer; transition: background .15s; white-space: nowrap;
+}
+.btn-add:hover { background: var(--accent2); }
+
+/* ── RESULTS ── */
+.results { display: flex; flex-direction: column; gap: 14px; }
+
+.big-profit {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r2);
+  padding: 22px 24px;
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+.big-profit::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+}
+.big-profit.pos::before { background: var(--green); }
+.big-profit.neg::before { background: var(--red); }
+.big-profit.warn::before { background: var(--amber); }
+.bp-label { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.bp-val { font-family: var(--serif); font-size: 52px; line-height: 1; letter-spacing: -.02em; font-weight: 400; }
+.bp-sub { font-family: var(--mono); font-size: 12px; margin-top: 8px; }
+
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.stat {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 14px 16px; box-shadow: var(--shadow);
+}
+.stat-l { font-family: var(--mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+.stat-v { font-family: var(--mono); font-size: 19px; font-weight: 500; }
+.stat-s { font-family: var(--mono); font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+/* ── DONUT ── */
+.donut-wrap { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.donut-svg-wrap { position: relative; flex-shrink: 0; }
+.donut-center {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+}
+.donut-c-val { font-family: var(--mono); font-size: 15px; font-weight: 500; }
+.donut-c-lbl { font-family: var(--mono); font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+.donut-legend { flex: 1; min-width: 110px; display: flex; flex-direction: column; gap: 7px; }
+.dl-item { display: flex; align-items: center; gap: 8px; }
+.dl-dot { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; }
+.dl-name { flex: 1; font-size: 12px; color: var(--muted); font-family: var(--serif); }
+.dl-val { font-family: var(--mono); font-size: 11px; color: var(--text); }
+
+/* ── BAR ── */
+.bar-track {
+  height: 36px; border-radius: 7px; overflow: hidden;
+  display: flex; background: var(--bg2); border: 1px solid var(--border); margin-bottom: 10px;
+}
+.bar-seg {
+  height: 100%; display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 10px; font-weight: 500;
+  transition: width .4s cubic-bezier(.4,0,.2,1); overflow: hidden; white-space: nowrap;
+}
+.bar-legend-wrap { display: flex; flex-wrap: wrap; gap: 10px; }
+.bl-item { display: flex; align-items: center; gap: 5px; font-family: var(--mono); font-size: 11px; color: var(--muted); }
+.bl-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+
+/* ── VERDICT ── */
+.verdict {
+  border-radius: var(--r); padding: 14px 16px;
+  font-family: var(--mono); font-size: 12px; line-height: 1.8; border-left: 3px solid;
+}
+.verdict.great { background: var(--green-bg); border-color: var(--green); color: var(--green); }
+.verdict.ok    { background: var(--amber-bg); border-color: var(--amber); color: var(--amber); }
+.verdict.bad   { background: var(--red-bg);   border-color: var(--red);   color: var(--red);   }
+
+/* ── DIVIDER ── */
+.divider { height: 1px; background: var(--border); margin: 3rem 0; }
+
+/* ── PROJECTIONS ── */
+.proj-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 1rem; }
+@media(max-width:540px){ .proj-grid { grid-template-columns: repeat(2,1fr); } }
+.proj-item {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--r);
+  padding: 14px; text-align: center; box-shadow: var(--shadow);
+}
+.proj-period { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 5px; }
+.proj-val { font-family: var(--mono); font-size: 16px; font-weight: 500; }
+
+/* ── BREAKEVEN ── */
+.be-inputs { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 1.25rem; }
+.be-field { display: flex; align-items: center; gap: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; box-shadow: var(--shadow); }
+.be-prefix { font-family: var(--mono); font-size: 14px; padding: 8px 10px; color: var(--muted); background: var(--bg2); border-right: 1px solid var(--border); }
+.be-input { background: transparent; border: none; outline: none; font-family: var(--mono); font-size: 14px; color: var(--text); padding: 8px 10px; width: 100px; }
+.be-label-txt { font-size: 13px; color: var(--muted); font-family: var(--serif); }
+.be-table { width: 100%; border-collapse: collapse; }
+.be-table td { padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+.be-table tr:last-child td { border-bottom: none; }
+.be-table .be-k { color: var(--muted); font-family: var(--serif); }
+.be-table .be-v { font-family: var(--mono); font-size: 14px; text-align: right; }
+
+/* ── COMPARE ── */
+.compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 1rem; }
+@media(max-width:600px){ .compare-grid { grid-template-columns: 1fr; } }
+.cmp-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r2); padding: 18px 20px; box-shadow: var(--shadow); }
+.cmp-sel {
+  width: 100%; background: var(--bg2); border: 1px solid var(--border); border-radius: 7px;
+  padding: 8px 12px; font-family: var(--serif); font-size: 14px; color: var(--text);
+  outline: none; margin-bottom: 14px; cursor: pointer; appearance: none; -webkit-appearance: none;
+}
+.cmp-sel option { background: var(--surface); }
+.cmp-table { width: 100%; border-collapse: collapse; }
+.cmp-table td { padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+.cmp-table tr:last-child td { border-bottom: none; padding-top: 12px; font-family: var(--mono); font-size: 15px; }
+.cmp-k { color: var(--muted); font-family: var(--serif); }
+.cmp-v { font-family: var(--mono); font-size: 14px; text-align: right; }
+.winner-tag {
+  display: inline-block; font-family: var(--mono); font-size: 10px; letter-spacing: .06em;
+  padding: 3px 8px; border-radius: 20px; background: var(--green-bg);
+  color: var(--green); border: 1px solid var(--green); margin-top: 10px;
+}
+
+/* ── TIPS SECTION ── */
+.tips-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin-top: 1rem; }
+.tip-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 16px 18px; box-shadow: var(--shadow); }
+.tip-num { font-family: var(--mono); font-size: 11px; color: var(--accent); margin-bottom: 6px; }
+.tip-title { font-family: var(--serif); font-size: 15px; font-weight: 400; margin-bottom: 6px; }
+.tip-body { font-size: 13px; color: var(--muted); font-family: var(--serif); line-height: 1.6; }
+
+
+
+/* ── NEW UPGRADE PANELS ── */
+.action-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+.mini-panel {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--r);
+  padding: 16px 18px; box-shadow: var(--shadow);
+}
+.mini-label { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.score-row { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.score-val { font-family: var(--serif); font-size: 36px; line-height:1; }
+.score-chip {
+  display:inline-flex; align-items:center; gap:6px; padding:5px 10px; border-radius: 999px;
+  font-family: var(--mono); font-size: 10px; letter-spacing: .06em; text-transform: uppercase;
+}
+.score-chip.good { background: var(--green-bg); color: var(--green); border:1px solid var(--green); }
+.score-chip.warn { background: var(--amber-bg); color: var(--amber); border:1px solid var(--amber); }
+.score-chip.bad { background: var(--red-bg); color: var(--red); border:1px solid var(--red); }
+.score-bar { height: 8px; background: var(--bg2); border-radius: 999px; overflow:hidden; margin-top: 12px; }
+.score-fill { height:100%; background: var(--accent); border-radius:999px; transition: width .2s ease; }
+.health-list { margin-top: 12px; display:grid; gap:8px; }
+.health-item { display:flex; justify-content:space-between; gap:12px; font-size:13px; color:var(--muted); }
+.goal-grid { display:grid; grid-template-columns: 1.1fr .9fr; gap: 18px; }
+.goal-controls { display:grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 10px; }
+.field-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r); padding: 10px 12px; }
+.field-card label { display:block; font-family: var(--mono); font-size: 10px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.field-card .field-input-wrap { display:flex; align-items:center; gap:8px; }
+.field-card input, .field-card select {
+  width:100%; border:none; outline:none; background:transparent; color:var(--text);
+  font-family: var(--mono); font-size: 16px;
+}
+.goal-out { display:grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; margin-top: 14px; }
+.goal-stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 14px; }
+.goal-stat .k { font-family: var(--mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.goal-stat .v { font-family: var(--serif); font-size: 28px; line-height: 1.05; }
+.goal-note { font-size: 13px; color: var(--muted); margin-top: 12px; line-height: 1.6; }
+.sugg-grid { display:grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; }
+.sugg-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 16px; box-shadow: var(--shadow); }
+.sugg-top { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom: 8px; }
+.sugg-badge { font-family: var(--mono); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
+.sugg-impact { font-family: var(--serif); font-size: 24px; }
+.sugg-title { font-family: var(--serif); font-size: 16px; margin-bottom: 4px; }
+.sugg-body { color: var(--muted); font-size: 13px; line-height: 1.6; }
+.sugg-cta { margin-top: 10px; font-family: var(--mono); font-size: 11px; color: var(--accent); }
+.action-row { display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+.ghost-btn {
+  background: var(--surface); border: 1px solid var(--border); color: var(--text); cursor:pointer;
+  border-radius: 999px; padding: 9px 12px; font-family: var(--mono); font-size: 11px; letter-spacing:.04em;
+}
+.ghost-btn:hover { border-color: var(--accent); color: var(--accent); }
+.save-note { font-size: 12px; color: var(--muted); margin-top: 10px; line-height: 1.6; }
+.compare-summary { margin-top: 14px; }
+.compare-callout {
+  background: var(--accent-bg); border: 1px solid var(--border); color: var(--text);
+  border-radius: var(--r); padding: 14px 16px; line-height: 1.7; font-size: 14px;
+}
+.compare-delta { margin-top: 10px; display:grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; }
+.delta-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 12px 14px; }
+.delta-box .k { font-family: var(--mono); font-size: 10px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.delta-box .v { font-family: var(--serif); font-size: 24px; }
+@media (max-width: 900px){
+  .action-grid, .goal-grid, .goal-controls, .goal-out, .sugg-grid, .compare-delta { grid-template-columns:1fr; }
+}
+
+/* ── FOOTER ── */
+footer {
+  margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border);
+  text-align: center; font-family: var(--mono); font-size: 11px; color: var(--muted);
+  letter-spacing: .04em; line-height: 2;
+}
+footer a { color: var(--accent); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+
+/* ── UTILS ── */
+.pos-col { color: var(--green); }
+.neg-col { color: var(--red); }
+.amb-col { color: var(--amber); }
+.acc-col { color: var(--accent); }
+
+
+/* ── RESPONSIVE + OVERFLOW FIXES ── */
+html, body { overflow-x: hidden; }
+.wrap { width: 100%; }
+.main-grid, .results, .panel, .mini-panel, .stat, .goal-stat, .delta-box, .sugg-card, .cmp-card,
+.stat-grid, .action-grid, .goal-grid, .goal-controls, .goal-out, .sugg-grid, .compare-grid, .compare-delta, .proj-grid {
+  min-width: 0;
+}
+.bp-val, .score-val, .goal-stat .v, .delta-box .v, .sugg-impact, .stat-v, .cmp-v, .health-item strong {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+.score-row, .health-item, .sugg-top {
+  flex-wrap: wrap;
+}
+.health-item {
+  align-items: flex-start;
+}
+.health-item strong {
+  text-align: right;
+}
+.compare-callout, .goal-note, .sugg-body, .save-note, .bp-sub {
+  overflow-wrap: anywhere;
+}
+.action-row {
+  align-items: stretch;
+}
+.ghost-btn {
+  white-space: normal;
+  line-height: 1.35;
+}
+.cmp-table {
+  table-layout: fixed;
+}
+.cmp-k, .cmp-v {
+  overflow-wrap: anywhere;
+}
+.field-input-wrap span, .be-prefix {
+  flex: 0 0 auto;
+}
+.field-card input, .field-card select, .be-input {
+  min-width: 0;
+}
+@media (max-width: 1024px){
+  .wrap { padding: 2.25rem 1.5rem 4.5rem; }
+  .bp-val { font-size: 44px; }
+  .score-val { font-size: 30px; }
+  .goal-stat .v, .delta-box .v { font-size: 24px; }
+}
+@media (max-width: 768px){
+  .wrap { padding: 1.5rem 1rem 4rem; }
+  nav { padding-left: 1rem; padding-right: 1rem; }
+  .big-profit, .panel, .mini-panel, .cmp-card { padding: 16px; }
+  .stat-grid { grid-template-columns: 1fr; }
+  .bp-val { font-size: 38px; }
+  .score-row { align-items: flex-start; }
+  .score-val { font-size: 28px; }
+  .goal-stat .v, .delta-box .v, .sugg-impact { font-size: 22px; }
+  .cmp-table td { font-size: 13px; }
+}
+@media (max-width: 520px){
+  h1 { font-size: 32px; }
+  .hero { margin-bottom: 2.25rem; padding-bottom: 2rem; }
+  .section-title { font-size: 20px; }
+  .big-profit { padding: 14px; }
+  .bp-val { font-size: 34px; }
+  .score-val { font-size: 24px; }
+  .goal-stat .v, .delta-box .v, .sugg-impact, .stat-v { font-size: 20px; }
+  .action-row { grid-template-columns: 1fr; display: grid; }
+  .ghost-btn { width: 100%; justify-content: center; }
+  .compare-callout { padding: 12px; }
+  .health-item { flex-direction: column; gap: 4px; }
+  .health-item strong { text-align: left; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-brand" href="https://chineme-eng.github.io/KatCodes-for-Everyone/" target="_blank">
+    <span>Kat</span>Tools
+  </a>
+  <div class="nav-right">
+    <a class="nav-link" href="#models">Models</a>
+    <a class="nav-link" href="#results">Results</a>
+    <a class="nav-link" href="#projections">Projections</a>
+    <a class="nav-link" href="#compare">Compare</a>
+    <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">Dark mode</button>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-eyebrow">Revenue ≠ Profit</div>
+    <h1>The Ultimate<br><em>Profit</em> Calculator</h1>
+    <p class="hero-sub">
+      Every business model. Every cost. The real number you actually take home.
+      Built for founders, freelancers, creators, and anyone who wants to know the truth.
+    </p>
+    <div class="rev-bar">
+      <span class="rev-label">Revenue</span>
+      <div class="rev-input-wrap">
+        <span class="rev-prefix">$</span>
+        <input id="revenueInput" type="text" value="50,000" oninput="onRevInput(this)" onblur="formatRevInput(this)"/>
+        <select id="periodSel" onchange="update()">
+          <option value="day">/ day</option>
+          <option value="week">/ week</option>
+          <option value="month" selected>/ month</option>
+          <option value="year">/ year</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <!-- MODEL SELECTION -->
+  <section id="models">
+    <div class="section-head">
+      <span class="section-title">Choose a business model</span>
+      <span class="section-sub" id="modelCount"></span>
+    </div>
+    <div class="cat-scroll">
+      <div class="cats" id="cats"></div>
+    </div>
+    <div class="model-grid" id="modelGrid"></div>
+  </section>
+
+  <!-- MAIN: COSTS + RESULTS -->
+  <div class="main-grid" id="results">
+
+    <!-- LEFT: COST EDITOR -->
+    <div>
+      <div class="section-head" style="margin-bottom:1rem">
+        <span class="section-title">Cost structure</span>
+        <span class="section-sub" id="costCount"></span>
+      </div>
+      <div class="panel">
+        <div class="panel-hdr">
+          <span class="panel-label">Line items — edit, remove, or add your own</span>
+          <button class="btn-ghost" onclick="resetCosts()">Reset</button>
+        </div>
+        <div class="cost-items" id="costItems"></div>
+        <div class="add-row">
+          <input type="text" id="newCostName" placeholder="Add a custom cost…" onkeydown="if(event.key==='Enter')addCustomCost()"/>
+          <select id="newCostType" class="add-type">
+            <option value="pct">%</option>
+            <option value="fixed">$</option>
+          </select>
+          <button class="btn-add" onclick="addCustomCost()">+ Add</button>
+        </div>
+      </div>
+
+      <!-- TIPS + IMPROVEMENT IDEAS (below cost editor) -->
+      <div style="margin-top:1.5rem">
+        <div class="panel-label" style="margin-bottom:.75rem">What good margins look like</div>
+        <div id="marginGuide"></div>
+      </div>
+
+      <div class="panel" style="margin-top:1.5rem">
+        <div class="panel-label" style="margin-bottom:14px">Fastest ways to improve profit</div>
+        <div class="sugg-grid" id="suggestionsGrid"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: RESULTS -->
+    <div class="results">
+
+      <div class="big-profit" id="bigProfit">
+        <div class="bp-label">Take-home profit</div>
+        <div class="bp-val" id="bpVal">—</div>
+        <div class="bp-sub" id="bpSub"></div>
+      </div>
+
+      <div class="stat-grid" id="statGrid"></div>
+
+      <div class="action-grid">
+        <div class="mini-panel">
+          <div class="mini-label">Business health score</div>
+          <div class="score-row">
+            <div class="score-val" id="healthScoreVal">—</div>
+            <div class="score-chip warn" id="healthScoreChip">Calculating</div>
+          </div>
+          <div class="score-bar"><div class="score-fill" id="healthScoreFill" style="width:0%"></div></div>
+          <div class="health-list" id="healthScoreList"></div>
+        </div>
+        <div class="mini-panel">
+          <div class="mini-label">Save this scenario</div>
+          <div class="action-row">
+            <button class="ghost-btn" onclick="saveScenario()">Save scenario</button>
+            <button class="ghost-btn" onclick="loadScenario()">Load saved</button>
+            <button class="ghost-btn" onclick="copyScenarioSummary()">Copy summary</button>
+          </div>
+          <div class="save-note" id="saveNote">Keep a favorite setup, reload it later, or copy a clean text summary to share.</div>
+        </div>
+      </div>
+
+      <!-- DONUT -->
+      <div class="panel">
+        <div class="panel-label" style="margin-bottom:14px">Cost breakdown</div>
+        <div class="donut-wrap">
+          <div class="donut-svg-wrap">
+            <svg id="donutSvg" width="120" height="120" viewBox="0 0 120 120"></svg>
+            <div class="donut-center">
+              <div class="donut-c-val" id="donutCVal"></div>
+              <div class="donut-c-lbl">costs</div>
+            </div>
+          </div>
+          <div class="donut-legend" id="donutLegend"></div>
+        </div>
+      </div>
+
+      <!-- BAR -->
+      <div class="panel">
+        <div class="panel-label" style="margin-bottom:12px">Where every dollar goes</div>
+        <div class="bar-track" id="barTrack"></div>
+        <div class="bar-legend-wrap" id="barLegend"></div>
+      </div>
+
+      <!-- VERDICT -->
+      <div id="verdictEl"></div>
+
+
+    </div>
+  </div>
+
+  <!-- GOAL MODE -->
+  <div class="divider"></div>
+  <section id="goalMode">
+    <div class="section-head">
+      <span class="section-title">Goal mode</span>
+      <span class="section-sub">reverse engineer the numbers</span>
+    </div>
+    <div class="goal-grid">
+      <div class="panel">
+        <div class="panel-label" style="margin-bottom:14px">Target take-home profit</div>
+        <div class="goal-controls">
+          <div class="field-card">
+            <label for="goalProfitInput">Profit goal</label>
+            <div class="field-input-wrap"><span style="font-family:var(--mono);color:var(--muted)">$</span><input id="goalProfitInput" type="text" value="10,000" oninput="update()"></div>
+          </div>
+          <div class="field-card">
+            <label for="goalRaiseInput">Planned price lift</label>
+            <div class="field-input-wrap"><input id="goalRaiseInput" type="number" min="0" step="1" value="10" oninput="update()"><span style="font-family:var(--mono);color:var(--muted)">%</span></div>
+          </div>
+          <div class="field-card">
+            <label for="goalCutInput">Planned cost cut</label>
+            <div class="field-input-wrap"><input id="goalCutInput" type="number" min="0" step="1" value="5" oninput="update()"><span style="font-family:var(--mono);color:var(--muted)">%</span></div>
+          </div>
+        </div>
+        <div class="goal-out" id="goalOutput"></div>
+        <div class="goal-note" id="goalNote"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-label" style="margin-bottom:14px">What gets you there faster</div>
+        <div id="goalAssist"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTIONS -->
+  <div class="divider"></div>
+  <section id="projections">
+    <div class="section-head">
+      <span class="section-title">Profit projections</span>
+      <span class="section-sub" id="projLabel"></span>
+    </div>
+    <p style="font-size:14px;color:var(--muted);font-family:var(--serif);margin-bottom:.5rem">
+      Scaled from your current profit per period at today's margin. These assume consistent performance.
+    </p>
+    <div class="proj-grid" id="projGrid"></div>
+  </section>
+
+  <!-- BREAKEVEN -->
+  <div class="divider"></div>
+  <section>
+    <div class="section-head">
+      <span class="section-title">Break-even analysis</span>
+      <span class="section-sub">how many sales to cover fixed costs</span>
+    </div>
+    <div class="be-inputs">
+      <span class="be-label-txt">Fixed monthly overhead</span>
+      <div class="be-field">
+        <span class="be-prefix">$</span>
+        <input class="be-input" id="fixedCosts" type="text" value="2,000" oninput="update()"/>
+      </div>
+      <span class="be-label-txt">Avg order value</span>
+      <div class="be-field">
+        <span class="be-prefix">$</span>
+        <input class="be-input" id="aov" type="text" value="50" oninput="update()"/>
+      </div>
+    </div>
+    <div class="panel" style="padding:0;overflow:hidden">
+      <table class="be-table" style="padding:0 22px">
+        <tbody id="beRows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- COMPARE -->
+  <div class="divider"></div>
+  <section id="compare">
+    <div class="section-head">
+      <span class="section-title">Side-by-side comparison</span>
+      <span class="section-sub">same revenue, two models</span>
+    </div>
+    <p style="font-size:14px;color:var(--muted);font-family:var(--serif);margin-bottom:.5rem">
+      Pick any two business models below to see which one gives you more profit at your current revenue.
+    </p>
+    <div class="compare-grid" id="compareGrid"></div>
+    <div class="compare-summary" id="compareSummary"></div>
+  </section>
+
+  <!-- TIPS -->
+  <div class="divider"></div>
+  <section>
+    <div class="section-head">
+      <span class="section-title">What actually moves your margin</span>
+    </div>
+    <div class="tips-grid">
+      <div class="tip-card">
+        <div class="tip-num">01</div>
+        <div class="tip-title">Cut your biggest cost first</div>
+        <div class="tip-body">Shaving 5% off your largest line item does more than eliminating ten small ones. Always attack the tallest bar in your chart.</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num">02</div>
+        <div class="tip-title">Revenue ≠ profit</div>
+        <div class="tip-body">A $50k revenue day with 8% margin earns you $4k. A $10k revenue day with 40% margin earns you $4k. Same money, very different businesses.</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num">03</div>
+        <div class="tip-title">Digital scales, physical doesn't</div>
+        <div class="tip-body">Digital products and SaaS can reach 60–80% margins because the cost to serve the 1,000th customer is nearly zero. Physical products hit a ceiling.</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num">04</div>
+        <div class="tip-title">Ad spend is a variable cost</div>
+        <div class="tip-body">Every dollar in ad spend should return more than a dollar in margin. If your ROAS drops below your break-even ROAS, you're paying to lose money.</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num">05</div>
+        <div class="tip-title">Tax is a cost too</div>
+        <div class="tip-body">Self-employment tax (15.3% in the US), income tax, and sales tax all come off profit. Model tax as a cost line from day one or you'll get a painful surprise.</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num">06</div>
+        <div class="tip-title">Retainers beat one-off sales</div>
+        <div class="tip-body">Recurring revenue means lower customer acquisition cost per dollar earned. One client paying $1k/month is worth more than twelve clients paying $1k once.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div>Ultimate Profit Calculator &nbsp;·&nbsp; All figures are estimates for planning purposes only.</div>
+    <div style="margin-top:.5rem">
+      Built to match <a href="https://chineme-eng.github.io/KatCodes-for-Everyone/" target="_blank">KatCodes for Everyone</a>
+      &nbsp;·&nbsp; Revenue ≠ Profit
+    </div>
+  </footer>
+
+</div><!-- /wrap -->
+
+<script>
+// ── THEME ──────────────────────────────────────────────────────────────────────
+function toggleTheme(){
+  const html = document.documentElement;
+  const dark = html.dataset.theme !== 'dark';
+  html.dataset.theme = dark ? 'dark' : 'light';
+  document.getElementById('themeBtn').textContent = dark ? 'Light mode' : 'Dark mode';
+  localStorage.setItem('kc-theme', html.dataset.theme);
+}
+(function(){
+  const saved = localStorage.getItem('kc-theme');
+  if(saved){ document.documentElement.dataset.theme = saved; document.addEventListener('DOMContentLoaded',()=>{ document.getElementById('themeBtn').textContent = saved==='dark'?'Light mode':'Dark mode'; }); }
+})();
+
+// ── DATA ──────────────────────────────────────────────────────────────────────
+const CATEGORIES = [
+  {id:'all',label:'All'},
+  {id:'ecom',label:'E-Commerce'},
+  {id:'services',label:'Services'},
+  {id:'content',label:'Content'},
+  {id:'saas',label:'SaaS / Tech'},
+  {id:'physical',label:'Physical'},
+  {id:'finance',label:'Finance'},
+];
+
+const MODELS = [
+  {id:'dropship',cat:'ecom',icon:'📦',name:'Dropshipping',desc:'AliExpress / supplier',margin:'low',costs:[
+    {n:'Paid ads',t:'pct',v:35},{n:'Product cost',t:'pct',v:30},{n:'Returns & chargebacks',t:'pct',v:5},{n:'Platform fees',t:'pct',v:2},{n:'Apps & tools',t:'fixed',v:100}]},
+  {id:'pod',cat:'ecom',icon:'🎨',name:'Print on Demand',desc:'Printful, Printify',margin:'low',costs:[
+    {n:'Paid ads',t:'pct',v:28},{n:'Product + fulfillment',t:'pct',v:42},{n:'Returns',t:'pct',v:2},{n:'Platform fees',t:'pct',v:2}]},
+  {id:'brand',cat:'ecom',icon:'🏷️',name:'Branded DTC',desc:'Private label product',margin:'med',costs:[
+    {n:'Paid ads',t:'pct',v:20},{n:'COGS + fulfillment',t:'pct',v:28},{n:'Returns',t:'pct',v:5},{n:'Platform fees',t:'pct',v:2},{n:'Branding & ops',t:'pct',v:5}]},
+  {id:'amazon',cat:'ecom',icon:'🛒',name:'Amazon FBA',desc:'Fulfilled by Amazon',margin:'low',costs:[
+    {n:'Amazon fees',t:'pct',v:30},{n:'Product COGS',t:'pct',v:30},{n:'PPC ads',t:'pct',v:15},{n:'Returns',t:'pct',v:4}]},
+  {id:'wholesale',cat:'ecom',icon:'🏭',name:'Wholesale / B2B',desc:'Bulk to retailers',margin:'med',costs:[
+    {n:'Product COGS',t:'pct',v:45},{n:'Shipping & logistics',t:'pct',v:8},{n:'Sales & ops',t:'pct',v:10},{n:'Marketplace fees',t:'pct',v:3}]},
+  {id:'digital',cat:'ecom',icon:'💾',name:'Digital Products',desc:'Templates, ebooks, presets',margin:'high',costs:[
+    {n:'Paid ads',t:'pct',v:20},{n:'Platform fees',t:'pct',v:5},{n:'Refunds',t:'pct',v:2},{n:'Content creation',t:'fixed',v:500}]},
+  {id:'freelance',cat:'services',icon:'💻',name:'Freelancing',desc:'Design, dev, writing',margin:'high',costs:[
+    {n:'Self-employment tax',t:'pct',v:15},{n:'Software & tools',t:'fixed',v:200},{n:'Marketing',t:'pct',v:5},{n:'Unbillable time (est.)',t:'pct',v:10}]},
+  {id:'agency',cat:'services',icon:'🏢',name:'Agency',desc:'Marketing / dev agency',margin:'med',costs:[
+    {n:'Contractors / staff',t:'pct',v:45},{n:'Software & tools',t:'fixed',v:800},{n:'Sales & marketing',t:'pct',v:10},{n:'Overhead & ops',t:'pct',v:8}]},
+  {id:'automation',cat:'services',icon:'⚙️',name:'AI Automation Agency',desc:'n8n, Make, Zapier builds',margin:'high',costs:[
+    {n:'Contractor / delivery',t:'pct',v:25},{n:'Software & APIs',t:'fixed',v:400},{n:'Sales & outreach',t:'pct',v:10},{n:'Overhead',t:'pct',v:5}]},
+  {id:'consulting',cat:'services',icon:'🎯',name:'Consulting',desc:'Strategy, coaching',margin:'high',costs:[
+    {n:'Self-employment tax',t:'pct',v:15},{n:'Marketing',t:'pct',v:8},{n:'Tools & misc',t:'fixed',v:300}]},
+  {id:'smma',cat:'services',icon:'📱',name:'Social Media Agency',desc:'SMMA / content mgmt',margin:'med',costs:[
+    {n:'Content creators / VAs',t:'pct',v:35},{n:'Ad management tools',t:'fixed',v:300},{n:'Client acquisition',t:'pct',v:12},{n:'Overhead',t:'pct',v:5}]},
+  {id:'youtube',cat:'content',icon:'▶️',name:'YouTube AdSense',desc:'Monetized channel',margin:'high',costs:[
+    {n:'Production costs',t:'pct',v:20},{n:'Software & equipment',t:'fixed',v:300},{n:'Taxes',t:'pct',v:25}]},
+  {id:'faceless',cat:'content',icon:'🎬',name:'Faceless YouTube',desc:'AI-automated channel',margin:'high',costs:[
+    {n:'AI tools (voice/script)',t:'fixed',v:200},{n:'Editor / outsourcing',t:'pct',v:25},{n:'Taxes',t:'pct',v:25},{n:'Paid promotion',t:'pct',v:5}]},
+  {id:'newsletter',cat:'content',icon:'📧',name:'Newsletter',desc:'Beehiiv, Substack',margin:'high',costs:[
+    {n:'Platform fee',t:'pct',v:5},{n:'Growth / acquisition',t:'pct',v:15},{n:'Content & research',t:'pct',v:10},{n:'Taxes',t:'pct',v:25}]},
+  {id:'course',cat:'content',icon:'🎓',name:'Online Course',desc:'Teachable, Gumroad, Kajabi',margin:'high',costs:[
+    {n:'Platform fee',t:'pct',v:8},{n:'Paid ads',t:'pct',v:20},{n:'Refunds',t:'pct',v:3},{n:'Content production',t:'fixed',v:500}]},
+  {id:'affiliate',cat:'content',icon:'🔗',name:'Affiliate Marketing',desc:'Commissions & referrals',margin:'high',costs:[
+    {n:'Paid traffic / SEO',t:'pct',v:30},{n:'Tools & hosting',t:'fixed',v:150},{n:'Content creation',t:'pct',v:10},{n:'Taxes',t:'pct',v:25}]},
+  {id:'podcast',cat:'content',icon:'🎙️',name:'Podcast',desc:'Sponsorships + premium',margin:'high',costs:[
+    {n:'Recording & editing',t:'pct',v:15},{n:'Hosting & tools',t:'fixed',v:100},{n:'Marketing',t:'pct',v:10},{n:'Taxes',t:'pct',v:25}]},
+  {id:'saas',cat:'saas',icon:'🚀',name:'SaaS / Micro-SaaS',desc:'Subscription software',margin:'high',costs:[
+    {n:'Infrastructure / APIs',t:'pct',v:10},{n:'Customer support',t:'pct',v:8},{n:'Marketing & growth',t:'pct',v:20},{n:'Churn refunds',t:'pct',v:3},{n:'Dev tools',t:'fixed',v:400}]},
+  {id:'app',cat:'saas',icon:'📲',name:'Mobile App',desc:'In-app & subscriptions',margin:'med',costs:[
+    {n:'App store cut (30%)',t:'pct',v:30},{n:'Infrastructure',t:'pct',v:8},{n:'Marketing / UA',t:'pct',v:20},{n:'Dev & maintenance',t:'fixed',v:1000}]},
+  {id:'marketplace',cat:'saas',icon:'🏪',name:'Marketplace',desc:'Takes % of transactions',margin:'med',costs:[
+    {n:'Payment processing',t:'pct',v:3},{n:'Infrastructure',t:'pct',v:10},{n:'Support & ops',t:'pct',v:12},{n:'Marketing',t:'pct',v:15}]},
+  {id:'restaurant',cat:'physical',icon:'🍽️',name:'Restaurant / Food',desc:'Dine-in or delivery',margin:'low',costs:[
+    {n:'Food COGS',t:'pct',v:32},{n:'Labour',t:'pct',v:35},{n:'Rent & utilities',t:'fixed',v:5000},{n:'Delivery platform fees',t:'pct',v:8}]},
+  {id:'retail',cat:'physical',icon:'🏬',name:'Retail Store',desc:'Brick & mortar',margin:'low',costs:[
+    {n:'COGS',t:'pct',v:45},{n:'Rent',t:'fixed',v:4000},{n:'Staff',t:'pct',v:20},{n:'Utilities & misc',t:'fixed',v:800}]},
+  {id:'manufacturing',cat:'physical',icon:'🔧',name:'Manufacturing',desc:'Make and sell products',margin:'med',costs:[
+    {n:'Raw materials',t:'pct',v:35},{n:'Labour',t:'pct',v:20},{n:'Equipment & overhead',t:'fixed',v:3000},{n:'Distribution',t:'pct',v:8}]},
+  {id:'trading',cat:'finance',icon:'📈',name:'Trading / Investing',desc:'Stocks, crypto, forex',margin:'high',costs:[
+    {n:'Brokerage fees',t:'pct',v:1},{n:'Capital gains tax',t:'pct',v:30},{n:'Tools & data feeds',t:'fixed',v:200}]},
+  {id:'realestate',cat:'finance',icon:'🏠',name:'Real Estate Rental',desc:'Residential / STR',margin:'med',costs:[
+    {n:'Mortgage / financing',t:'pct',v:40},{n:'Property tax & insurance',t:'pct',v:12},{n:'Maintenance & repairs',t:'pct',v:8},{n:'Property management',t:'pct',v:10}]},
+  {id:'staking',cat:'finance',icon:'🪙',name:'Crypto / Staking',desc:'Yield & staking rewards',margin:'high',costs:[
+    {n:'Income tax',t:'pct',v:30},{n:'Platform fees',t:'pct',v:3},{n:'Gas / transaction fees',t:'fixed',v:50}]},
+];
+
+const COLORS = ['#b85c2a','#2e7d52','#1a5fa0','#7a3a9a','#b88a00','#d44070','#2a8a80','#a05020','#506090','#8a6030'];
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let revenue = 50000;
+let currentModel = MODELS[0];
+let costs = [];
+let activeCat = 'all';
+let compareModels = ['dropship','digital'];
+const SCENARIO_KEY = 'kc-profit-scenario-v1';
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+function init(){
+  renderCats();
+  renderModels();
+  loadModel(MODELS[0]);
+  renderCompare();
+}
+
+function renderCats(){
+  document.getElementById('cats').innerHTML = CATEGORIES.map(c=>
+    `<button class="cat-btn${c.id===activeCat?' active':''}" onclick="filterCat('${c.id}')">${c.label}</button>`
+  ).join('');
+}
+
+function filterCat(id){
+  activeCat = id;
+  renderCats();
+  renderModels();
+}
+
+function renderModels(){
+  const list = activeCat==='all'?MODELS:MODELS.filter(m=>m.cat===activeCat);
+  document.getElementById('modelCount').textContent = list.length + ' models';
+  document.getElementById('modelGrid').innerHTML = list.map(m=>
+    `<div class="model-card${m.id===currentModel.id?' active':''}" onclick="pickModel('${m.id}')">
+      <span class="mc-icon">${m.icon}</span>
+      <div class="mc-name">${m.name}</div>
+      <div class="mc-desc">${m.desc}</div>
+      <span class="mc-badge ${m.margin}">${m.margin==='high'?'High margin':m.margin==='med'?'Mid margin':'Low margin'}</span>
+    </div>`
+  ).join('');
+}
+
+function pickModel(id){
+  loadModel(MODELS.find(m=>m.id===id));
+}
+
+function loadModel(m){
+  currentModel = m;
+  costs = m.costs.map(c=>({...c,id:uid()}));
+  renderModels();
+  renderCosts();
+  update();
+}
+
+function uid(){ return Math.random().toString(36).slice(2); }
+
+// ── REVENUE ───────────────────────────────────────────────────────────────────
+function onRevInput(el){
+  revenue = parseInt(el.value.replace(/[^0-9]/g,''))||0;
+  update();
+}
+function formatRevInput(el){ el.value = revenue.toLocaleString(); }
+
+// ── COSTS ─────────────────────────────────────────────────────────────────────
+function renderCosts(){
+  document.getElementById('costCount').textContent = costs.length + ' line items';
+  document.getElementById('costItems').innerHTML = costs.map((c,i)=>
+    `<div class="cost-row">
+      <input class="cost-name-input" value="${c.n}" placeholder="Cost name"
+        oninput="costs[${i}].n=this.value;update()"/>
+      <select class="cost-type-sel" onchange="costs[${i}].t=this.value;renderCosts();update()">
+        <option value="pct"${c.t==='pct'?' selected':''}>%</option>
+        <option value="fixed"${c.t==='fixed'?' selected':''}>$</option>
+      </select>
+      <div class="cost-val-wrap">
+        <span class="cost-sym">${c.t==='pct'?'':'$'}</span>
+        <input class="cost-val" type="number" min="0" value="${c.v}"
+          oninput="costs[${i}].v=+this.value;update()"/>
+        <span class="cost-sym">${c.t==='pct'?'%':''}</span>
+      </div>
+      <button class="del-btn" onclick="delCost('${c.id}')">×</button>
+    </div>`
+  ).join('');
+}
+
+function delCost(id){
+  costs = costs.filter(c=>c.id!==id);
+  renderCosts(); update();
+}
+
+function resetCosts(){ loadModel(currentModel); }
+
+function addCustomCost(){
+  const name = document.getElementById('newCostName').value.trim();
+  if(!name) return;
+  const t = document.getElementById('newCostType').value;
+  costs.push({id:uid(),n:name,t,v:t==='pct'?5:100});
+  document.getElementById('newCostName').value='';
+  renderCosts(); update();
+}
+
+// ── CALC ──────────────────────────────────────────────────────────────────────
+function calcItems(){
+  return costs.map(c=>({...c, amt: c.t==='pct'? revenue*c.v/100 : c.v}));
+}
+
+function fmt(n){ return '$'+Math.round(n).toLocaleString(); }
+function fmtP(n){ return (Math.round(n*10)/10)+'%'; }
+
+// ── UPDATE ────────────────────────────────────────────────────────────────────
+function update(){
+  const items = calcItems();
+  const totalCost = items.reduce((s,c)=>s+c.amt,0);
+  const profit = revenue - totalCost;
+  const margin = revenue>0 ? profit/revenue*100 : 0;
+
+  const posCol = 'var(--green)', negCol = 'var(--red)', ambCol = 'var(--amber)';
+  const profCol = profit<0 ? negCol : margin<12 ? ambCol : posCol;
+  const profClass = profit<0 ? 'neg' : margin<12 ? 'warn' : 'pos';
+
+  // BIG PROFIT
+  const bp = document.getElementById('bigProfit');
+  bp.className = 'big-profit ' + profClass;
+  document.getElementById('bpVal').style.color = profCol;
+  document.getElementById('bpVal').textContent = fmt(profit);
+  document.getElementById('bpSub').innerHTML =
+    `<span style="color:${profCol}">${fmtP(margin)} net margin</span>
+     &nbsp;·&nbsp; <span style="color:var(--muted)">${fmt(totalCost)} total costs</span>
+     &nbsp;·&nbsp; <span style="color:var(--muted)">${fmt(revenue)} revenue</span>`;
+
+  // STATS
+  const period = document.getElementById('periodSel').value;
+  const pmMult = {day:30,week:4,month:12,year:5};
+  const pmLbl  = {day:'monthly (×30)',week:'monthly (×4)',month:'annual (×12)',year:'5-year (×5)'};
+  document.getElementById('statGrid').innerHTML = [
+    {l:'Net margin',    v:fmtP(margin),      s:margin>=25?'Healthy ✓':margin>=12?'Thin △':'Danger ✗',   c:profCol},
+    {l:'Cost ratio',    v:fmtP(revenue>0?totalCost/revenue*100:0), s:'of revenue consumed', c:'var(--muted)'},
+    {l:pmLbl[period],   v:fmt(profit*(pmMult[period]||12)),         s:'projected',           c:profCol},
+    {l:'Per $1 earned', v:revenue>0?'$'+(profit/revenue).toFixed(2):'—', s:'actual kept',   c:profCol},
+  ].map(s=>`<div class="stat">
+    <div class="stat-l">${s.l}</div>
+    <div class="stat-v" style="color:${s.c}">${s.v}</div>
+    <div class="stat-s">${s.s}</div>
+  </div>`).join('');
+
+  renderDonut(items, totalCost);
+  renderBar(items, profit);
+  renderVerdict(margin, profit);
+  renderHealthScore(items, totalCost, profit, margin);
+  renderSuggestions(items, totalCost, profit, margin);
+  renderGoalMode(items, totalCost, profit, margin);
+  renderProjections(profit, period);
+  renderBreakeven(margin);
+  renderMarginGuide(margin);
+  updateCompareCards();
+}
+
+// ── DONUT ─────────────────────────────────────────────────────────────────────
+function renderDonut(items, totalCost){
+  const cx=60,cy=60,r=44,sw=16;
+  const circ=2*Math.PI*r;
+  const slices = items.filter(c=>c.amt>0).map((c,i)=>({...c,color:COLORS[i%COLORS.length]}));
+  const tot = totalCost>0?totalCost:1;
+  let offset=0, paths='';
+  slices.forEach(s=>{
+    const frac=s.amt/tot, dash=frac*circ, gap=circ-dash;
+    paths+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${s.color}" stroke-width="${sw}"
+      stroke-dasharray="${dash.toFixed(2)} ${gap.toFixed(2)}"
+      stroke-dashoffset="${(-offset*circ).toFixed(2)}"
+      style="transition:stroke-dasharray .3s,stroke-dashoffset .3s"/>`;
+    offset+=frac;
+  });
+  if(!slices.length) paths=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--border)" stroke-width="${sw}"/>`;
+  document.getElementById('donutSvg').innerHTML=
+    `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--bg2)" stroke-width="${sw}"/>`+paths;
+  document.getElementById('donutCVal').textContent = fmt(totalCost);
+  document.getElementById('donutLegend').innerHTML = slices.map(s=>
+    `<div class="dl-item">
+      <div class="dl-dot" style="background:${s.color}"></div>
+      <span class="dl-name">${s.n}</span>
+      <span class="dl-val">${fmt(s.amt)}</span>
+    </div>`
+  ).join('');
+}
+
+// ── BAR ───────────────────────────────────────────────────────────────────────
+function renderBar(items, profit){
+  const profitColor = 'var(--green)';
+  const segs = [
+    ...items.filter(c=>c.amt>0).map((c,i)=>({label:c.n,val:c.amt,color:COLORS[i%COLORS.length]})),
+    {label:'Profit',val:Math.max(profit,0),color:profitColor},
+  ];
+  const tot = revenue>0?revenue:1;
+  document.getElementById('barTrack').innerHTML = segs.map(s=>{
+    const w = Math.max(s.val/tot*100,0).toFixed(1);
+    const light = s.color==='var(--green)';
+    return `<div class="bar-seg" style="width:${w}%;background:${s.color};color:${light?'#fff':'#fff'}">${w>9?s.label:''}</div>`;
+  }).join('');
+  document.getElementById('barLegend').innerHTML = segs.map(s=>
+    `<div class="bl-item">
+      <div class="bl-dot" style="background:${s.color}"></div>
+      ${s.label} — ${fmt(s.val)}
+    </div>`
+  ).join('');
+}
+
+// ── VERDICT ───────────────────────────────────────────────────────────────────
+function renderVerdict(margin,profit){
+  let cls,text;
+  const m = currentModel;
+  if(profit<0){
+    cls='bad';text=`You're operating at a loss. At current costs you're spending ${fmt(Math.abs(profit))} more than you earn. Reduce the largest cost line or increase your price.`;
+  } else if(margin>=30){
+    cls='great';text=`Strong margin at ${fmtP(margin)}. You keep ${fmt(profit)} from every revenue period. This business is healthy and scalable — focus on growth.`;
+  } else if(margin>=15){
+    cls='ok';text=`Viable but thin at ${fmtP(margin)}. You keep ${fmt(profit)}. One bad month or rising costs could hurt. Identify your biggest cost and find ways to reduce it.`;
+  } else {
+    cls='bad';text=`Warning: ${fmtP(margin)} margin is dangerously thin. You're keeping ${fmt(profit)} from ${fmt(revenue)} in revenue. Any disruption — returns, ad costs, refunds — puts you negative.`;
+  }
+  document.getElementById('verdictEl').innerHTML = `<div class="verdict ${cls}">${text}</div>`;
+}
+
+// ── PROJECTIONS ───────────────────────────────────────────────────────────────
+function renderProjections(profit,period){
+  const toMonthly={day:30,week:4,month:1,year:1/12};
+  const monthly = profit*(toMonthly[period]||1);
+  document.getElementById('projLabel').textContent = fmt(profit)+' / '+period;
+  document.getElementById('projGrid').innerHTML = [
+    {p:'Weekly',    m:1/4},
+    {p:'Monthly',   m:1},
+    {p:'Quarterly', m:3},
+    {p:'6 Months',  m:6},
+    {p:'Annual',    m:12},
+    {p:'3 Years',   m:36},
+  ].map(x=>`<div class="proj-item">
+    <div class="proj-period">${x.p}</div>
+    <div class="proj-val" style="color:${monthly*x.m>=0?'var(--green)':'var(--red)'}">${fmt(monthly*x.m)}</div>
+  </div>`).join('');
+}
+
+// ── BREAKEVEN ─────────────────────────────────────────────────────────────────
+function renderBreakeven(margin){
+  const fixed = parseInt((document.getElementById('fixedCosts').value||'').replace(/[^0-9]/g,''))||0;
+  const aov   = parseInt((document.getElementById('aov').value||'').replace(/[^0-9]/g,''))||50;
+  const contrib = aov * margin/100;
+  const units = contrib>0 ? Math.ceil(fixed/contrib) : Infinity;
+  const beRev = units===Infinity ? Infinity : units*aov;
+  const rows = [
+    ['Avg order value', fmt(aov),'var(--text)'],
+    ['Contribution margin per sale', fmt(contrib), contrib>0?'var(--green)':'var(--red)'],
+    ['Break-even sales needed', units===Infinity?'∞':units.toLocaleString()+' sales', 'var(--amber)'],
+    ['Break-even revenue needed', beRev===Infinity?'∞':fmt(beRev), 'var(--amber)'],
+    ['Profit per sale after break-even', fmt(contrib), 'var(--green)'],
+  ];
+  document.getElementById('beRows').innerHTML = rows.map(r=>
+    `<tr><td class="be-k" style="padding:10px 22px 10px 22px">${r[0]}</td><td class="be-v" style="color:${r[2]};padding:10px 22px 10px 0">${r[1]}</td></tr>`
+  ).join('');
+}
+
+// ── MARGIN GUIDE ──────────────────────────────────────────────────────────────
+function renderMarginGuide(current){
+  const benchmarks = [
+    {range:'Below 10%',label:'Danger zone',cls:'bad',note:'Unsustainable. Any disruption = losses.'},
+    {range:'10–20%',label:'Thin but viable',cls:'ok',note:'Common in e-com & retail. Optimize costs.'},
+    {range:'20–35%',label:'Healthy',cls:'great',note:'Strong business. Focus on growth.'},
+    {range:'35–60%',label:'Excellent',cls:'great',note:'Services, digital, SaaS territory.'},
+    {range:'60%+',label:'Best-in-class',cls:'great',note:'Digital products, SaaS at scale.'},
+  ];
+  document.getElementById('marginGuide').innerHTML = benchmarks.map(b=>
+    `<div style="display:flex;justify-content:space-between;align-items:baseline;padding:7px 0;border-bottom:1px solid var(--border);font-size:13px">
+      <span style="font-family:var(--mono);color:var(--muted)">${b.range}</span>
+      <span style="color:${b.cls==='great'?'var(--green)':b.cls==='ok'?'var(--amber)':'var(--red)'};font-family:var(--mono);font-size:11px">${b.label}</span>
+    </div>`
+  ).join('') + `<p style="font-size:12px;color:var(--muted);margin-top:8px;font-family:var(--serif)">Your current margin: <strong style="font-family:var(--mono);color:${current>=20?'var(--green)':current>=10?'var(--amber)':'var(--red)'}">${fmtP(current)}</strong></p>`;
+}
+
+// ── COMPARE ───────────────────────────────────────────────────────────────────
+function renderCompare(){
+  document.getElementById('compareGrid').innerHTML = [0,1].map(i=>
+    `<div class="cmp-card">
+      <select class="cmp-sel" onchange="compareModels[${i}]=this.value;updateCompareCards()">
+        ${MODELS.map(m=>`<option value="${m.id}"${m.id===compareModels[i]?' selected':''}>${m.icon} ${m.name}</option>`).join('')}
+      </select>
+      <table class="cmp-table"><tbody id="cmp${i}"></tbody></table>
+    </div>`
+  ).join('');
+  updateCompareCards();
+}
+
+function modelProfit(id){
+  const m = MODELS.find(x=>x.id===id); if(!m) return null;
+  const total = m.costs.reduce((s,c)=>s+(c.t==='pct'?revenue*c.v/100:c.v),0);
+  return {m,total,profit:revenue-total,margin:revenue>0?(revenue-total)/revenue*100:0};
+}
+
+function updateCompareCards(){
+  const ps = compareModels.map(id=>modelProfit(id));
+  const wi = ps[0]&&ps[1] ? (ps[0].profit>=ps[1].profit?0:1) : -1;
+  ps.forEach((p,i)=>{
+    const el=document.getElementById('cmp'+i); if(!el||!p) return;
+    el.innerHTML=`
+      <tr><td class="cmp-k">Revenue</td><td class="cmp-v pos-col">${fmt(revenue)}</td></tr>
+      <tr><td class="cmp-k">Total costs</td><td class="cmp-v neg-col">−${fmt(p.total)}</td></tr>
+      <tr><td class="cmp-k">Net margin</td><td class="cmp-v" style="color:${p.margin>=20?'var(--green)':p.margin>=10?'var(--amber)':'var(--red)'}">${fmtP(p.margin)}</td></tr>
+      <tr><td class="cmp-k">Take-home profit</td><td class="cmp-v" style="color:${p.profit>=0?'var(--green)':'var(--red)'}">${fmt(p.profit)}</td></tr>
+      ${wi===i?'<tr><td colspan="2"><span class="winner-tag">★ Better model at this revenue</span></td></tr>':''}
+    `;
+  });
+
+  const wrap = document.getElementById('compareSummary');
+  if(!wrap || !ps[0] || !ps[1]) return;
+  const winner = ps[wi];
+  const loser = ps[wi===0?1:0];
+  const profitDiff = winner.profit - loser.profit;
+  const marginDiff = winner.margin - loser.margin;
+  const tied = Math.abs(profitDiff) < 0.005 && Math.abs(marginDiff) < 0.005;
+  wrap.innerHTML = tied ? `
+    <div class="compare-callout">
+      <strong>${ps[0].m.name}</strong> and <strong>${ps[1].m.name}</strong> are effectively tied at this revenue.
+    </div>
+    <div class="compare-delta">
+      <div class="delta-box"><div class="k">Profit difference</div><div class="v">${fmt(0)}</div></div>
+      <div class="delta-box"><div class="k">Margin difference</div><div class="v">${fmtP(0)}</div></div>
+    </div>` : `
+    <div class="compare-callout">
+      <strong>${winner.m.name}</strong> is ahead at this revenue. It keeps ${fmt(profitDiff)} more profit than ${loser.m.name}, with a ${fmtP(Math.abs(marginDiff))} better net margin.
+    </div>
+    <div class="compare-delta">
+      <div class="delta-box"><div class="k">Profit difference</div><div class="v">${fmt(profitDiff)}</div></div>
+      <div class="delta-box"><div class="k">Margin difference</div><div class="v">${fmtP(Math.abs(marginDiff))}</div></div>
+    </div>`;
+}
+
+
+
+// ── HEALTH SCORE ─────────────────────────────────────────────────────────────
+function renderHealthScore(items, totalCost, profit, margin){
+  const biggest = items.slice().sort((a,b)=>b.amt-a.amt)[0];
+  const adLike = items.filter(x=>/ads|marketing|acquisition|ppc|promotion|traffic|ua/i.test(x.n)).reduce((s,x)=>s+x.amt,0);
+  const fixed = items.filter(x=>x.t==='fixed').reduce((s,x)=>s+x.amt,0);
+  let score = 50;
+  score += Math.max(Math.min((margin-10)*1.4, 32), -30);
+  score += Math.max(Math.min(((revenue-fixed)/Math.max(revenue,1))*12, 12), -12);
+  score -= Math.min((adLike/Math.max(revenue,1))*100*0.35, 14);
+  score -= biggest && revenue>0 && biggest.amt/revenue>0.4 ? 10 : 0;
+  score -= profit < 0 ? 25 : 0;
+  score = Math.max(0, Math.min(100, Math.round(score)));
+
+  let chip = {cls:'bad', txt:'Fragile'};
+  if(score >= 75) chip = {cls:'good', txt:'Healthy'};
+  else if(score >= 55) chip = {cls:'warn', txt:'Needs tuning'};
+
+  document.getElementById('healthScoreVal').textContent = score + '/100';
+  const chipEl = document.getElementById('healthScoreChip');
+  chipEl.className = 'score-chip ' + chip.cls;
+  chipEl.textContent = chip.txt;
+  document.getElementById('healthScoreFill').style.width = score + '%';
+
+  const itemsOut = [
+    ['Margin', fmtP(margin)],
+    ['Largest cost', biggest ? `${biggest.n} (${fmt(biggest.amt)})` : '—'],
+    ['Ad dependency', revenue>0 ? fmtP(adLike/revenue*100) : '0%'],
+    ['Fixed-cost pressure', revenue>0 ? fmtP(fixed/revenue*100) : '0%']
+  ];
+  document.getElementById('healthScoreList').innerHTML = itemsOut.map(([k,v])=>
+    `<div class="health-item"><span>${k}</span><strong style="font-family:var(--mono);font-weight:500;color:var(--text)">${v}</strong></div>`
+  ).join('');
+}
+
+// ── SUGGESTIONS ──────────────────────────────────────────────────────────────
+function renderSuggestions(items, totalCost, profit, margin){
+  const sorted = items.filter(x=>x.amt>0).slice().sort((a,b)=>b.amt-a.amt);
+  const biggest = sorted[0];
+  const second = sorted[1] || biggest;
+  const refundLike = sorted.find(x=>/refund|return|chargeback|churn/i.test(x.n));
+  const suggs = [];
+
+  if(biggest){
+    const save = biggest.amt * 0.05;
+    suggs.push({
+      badge:'Cut cost',
+      impact:`+${fmt(save)}`,
+      title:`Trim ${biggest.n} by 5%`,
+      body:`Your biggest line item is ${biggest.n}. A small 5% reduction lifts take-home profit from ${fmt(profit)} to ${fmt(profit + save)}.`,
+      cta:'Start with the tallest bar first.'
+    });
+  }
+
+  const priceLift = revenue * 0.10;
+  suggs.push({
+    badge:'Raise price',
+    impact:`+${fmt(priceLift)}`,
+    title:'Increase revenue by 10%',
+    body:`At your current cost structure, a 10% price or sales lift moves profit to ${fmt(profit + priceLift)} and margin to ${fmt(revenue>0 ? (profit+priceLift)/(revenue+priceLift)*100 : 0)}.`,
+    cta:'Low-cost growth usually beats cutting tiny expenses.'
+  });
+
+  if(refundLike){
+    const save = revenue * 0.02;
+    suggs.push({
+      badge:'Leak plug',
+      impact:`+${fmt(save)}`,
+      title:`Reduce ${refundLike.n.toLowerCase()} by 2 points`,
+      body:`Small quality or support improvements could keep roughly ${fmt(save)} from leaking out of the business each period.`,
+      cta:'Fix preventable losses before buying more traffic.'
+    });
+  } else if(second){
+    const save = second.amt * 0.08;
+    suggs.push({
+      badge:'Optimize ops',
+      impact:`+${fmt(save)}`,
+      title:`Improve ${second.n.toLowerCase()} efficiency`,
+      body:`An 8% improvement on ${second.n} adds about ${fmt(save)} back into profit without changing your headline revenue.`,
+      cta:'Second-largest costs are your next easiest wins.'
+    });
+  }
+
+  document.getElementById('suggestionsGrid').innerHTML = suggs.slice(0,3).map(s=>`
+    <div class="sugg-card">
+      <div class="sugg-top"><span class="sugg-badge">${s.badge}</span><span class="sugg-impact">${s.impact}</span></div>
+      <div class="sugg-title">${s.title}</div>
+      <div class="sugg-body">${s.body}</div>
+      <div class="sugg-cta">${s.cta}</div>
+    </div>`).join('');
+}
+
+// ── GOAL MODE ────────────────────────────────────────────────────────────────
+function parseMoneyInput(id){
+  return parseInt((document.getElementById(id)?.value || '').replace(/[^0-9]/g,'')) || 0;
+}
+
+function renderGoalMode(items, totalCost, profit, margin){
+  const goal = parseMoneyInput('goalProfitInput');
+  const raisePct = (+document.getElementById('goalRaiseInput').value || 0) / 100;
+  const cutPct = (+document.getElementById('goalCutInput').value || 0) / 100;
+  const gap = goal - profit;
+  const requiredRevenue = Math.max(0, goal + totalCost);
+  const extraRevenue = Math.max(0, requiredRevenue - revenue);
+  const afterRaiseRevenue = revenue * (1 + raisePct);
+  const afterCutCosts = totalCost * (1 - cutPct);
+  const projectedMixedProfit = afterRaiseRevenue - afterCutCosts;
+  const neededMargin = requiredRevenue > 0 ? (goal / requiredRevenue) * 100 : 0;
+
+  document.getElementById('goalOutput').innerHTML = [
+    ['Profit gap', gap <= 0 ? 'Goal hit' : fmt(gap)],
+    ['Revenue needed', fmt(requiredRevenue)],
+    ['Extra revenue needed', fmt(extraRevenue)],
+    ['Needed net margin', fmtP(neededMargin)]
+  ].map(([k,v])=>`<div class="goal-stat"><div class="k">${k}</div><div class="v">${v}</div></div>`).join('');
+
+  const faster = [];
+  if(gap <= 0){
+    faster.push('You are already at or above this target with the current setup.');
+  } else {
+    faster.push(`A straight-line path would move revenue from ${fmt(revenue)} to ${fmt(requiredRevenue)} at today's cost mix.`);
+    faster.push(`If you raise revenue by ${Math.round(raisePct*100)}% and cut costs by ${Math.round(cutPct*100)}%, projected profit becomes ${fmt(projectedMixedProfit)}.`);
+    faster.push(projectedMixedProfit >= goal
+      ? 'That combined move is enough to hit your target.'
+      : `That still leaves a remaining gap of ${fmt(goal - projectedMixedProfit)}.`);
+  }
+  document.getElementById('goalNote').textContent = faster.join(' ');
+
+  const assistCards = [
+    {k:'At current setup', v: fmt(profit), s:'current take-home'},
+    {k:`With +${Math.round(raisePct*100)}% revenue`, v: fmt(afterRaiseRevenue - totalCost), s:'same costs'},
+    {k:`With -${Math.round(cutPct*100)}% costs`, v: fmt(revenue - afterCutCosts), s:'same revenue'},
+    {k:'With both changes', v: fmt(projectedMixedProfit), s:'best near-term scenario'}
+  ];
+  document.getElementById('goalAssist').innerHTML = assistCards.map(x=>
+    `<div class="goal-stat" style="margin-bottom:10px"><div class="k">${x.k}</div><div class="v">${x.v}</div><div class="goal-note" style="margin-top:6px">${x.s}</div></div>`
+  ).join('');
+
+  const el = document.getElementById('goalProfitInput');
+  if(el !== document.activeElement) el.value = goal.toLocaleString();
+}
+
+// ── SAVE / SHARE ─────────────────────────────────────────────────────────────
+function saveScenario(){
+  const payload = {
+    revenue,
+    period: document.getElementById('periodSel').value,
+    currentModelId: currentModel.id,
+    costs,
+    goalProfit: parseMoneyInput('goalProfitInput'),
+    goalRaise: document.getElementById('goalRaiseInput').value,
+    goalCut: document.getElementById('goalCutInput').value,
+  };
+  localStorage.setItem(SCENARIO_KEY, JSON.stringify(payload));
+  document.getElementById('saveNote').textContent = `Saved ${currentModel.name} scenario at ${fmt(revenue)} revenue.`;
+}
+
+function loadScenario(){
+  const raw = localStorage.getItem(SCENARIO_KEY);
+  if(!raw){
+    document.getElementById('saveNote').textContent = 'No saved scenario yet. Save one first.';
+    return;
+  }
+  try {
+    const data = JSON.parse(raw);
+    revenue = +data.revenue || revenue;
+    document.getElementById('revenueInput').value = revenue.toLocaleString();
+    if(data.period) document.getElementById('periodSel').value = data.period;
+    const found = MODELS.find(m=>m.id===data.currentModelId);
+    currentModel = found || currentModel;
+    costs = Array.isArray(data.costs) ? data.costs.map(c=>({...c, id:c.id || uid()})) : currentModel.costs.map(c=>({...c,id:uid()}));
+    document.getElementById('goalProfitInput').value = ((+data.goalProfit || 10000)).toLocaleString();
+    document.getElementById('goalRaiseInput').value = data.goalRaise || 10;
+    document.getElementById('goalCutInput').value = data.goalCut || 5;
+    renderModels();
+    renderCosts();
+    update();
+    document.getElementById('saveNote').textContent = `Loaded saved ${currentModel.name} scenario.`;
+  } catch (e) {
+    document.getElementById('saveNote').textContent = 'Saved scenario could not be loaded.';
+  }
+}
+
+function copyScenarioSummary(){
+  const items = calcItems();
+  const totalCost = items.reduce((s,c)=>s+c.amt,0);
+  const profit = revenue - totalCost;
+  const margin = revenue>0 ? profit/revenue*100 : 0;
+  const topCosts = items.filter(x=>x.amt>0).sort((a,b)=>b.amt-a.amt).slice(0,3)
+    .map(x=>`${x.n}: ${fmt(x.amt)}`).join(' | ');
+  const summary = [
+    `Model: ${currentModel.name}`,
+    `Revenue: ${fmt(revenue)} per ${document.getElementById('periodSel').value}`,
+    `Profit: ${fmt(profit)}`,
+    `Net margin: ${fmtP(margin)}`,
+    `Top costs: ${topCosts || 'None'}`
+  ].join('\n');
+  const done = ()=>{ document.getElementById('saveNote').textContent = 'Summary copied to clipboard.'; };
+  if(navigator.clipboard?.writeText){
+    navigator.clipboard.writeText(summary).then(done).catch(()=>{ document.getElementById('saveNote').textContent = 'Copy failed on this browser.'; });
+  } else {
+    document.getElementById('saveNote').textContent = 'Clipboard is not available on this browser.';
+  }
+}
+
+init();
+</script>
+</body>
+</html>
