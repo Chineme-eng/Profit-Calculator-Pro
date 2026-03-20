@@ -73,20 +73,16 @@ body {
 
 /* ── NAV ── */
 nav {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  background: color-mix(in srgb, var(--bg) 92%, transparent);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--border);
-  padding: 0 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 1.5rem;
-  height: 52px;
-  transition: background .3s, box-shadow .2s ease;
+ position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 52px;
 }
 nav.scrolled {
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
