@@ -44,6 +44,38 @@ nav {
     min-height: 44px; /* Slimmer header */
 }
 
+/* ── HEADER CTA BUTTON ── */
+.nav-cta {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    background: var(--accent);
+    color: #fff !important; /* Forces white text in both themes */
+    padding: 8px 18px;
+    border-radius: 999px; /* Pill shape to match your aesthetic */
+    font-weight: 500;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(184, 92, 42, 0.25);
+    white-space: nowrap;
+}
+
+.nav-cta:hover {
+    background: var(--accent2);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(184, 92, 42, 0.4);
+}
+
+/* Dark mode specific shadow adjustment */
+[data-theme="dark"] .nav-cta {
+    box-shadow: 0 2px 8px rgba(212, 120, 74, 0.25);
+}
+
+[data-theme="dark"] .nav-cta:hover {
+    box-shadow: 0 4px 12px rgba(212, 120, 74, 0.4);
+}
+  
 .nav-brand {
     font-family: var(--mono);
     font-size: 12px;
@@ -489,8 +521,9 @@ html[data-theme='dark'] .cmp-sel,html[data-theme='dark'] .add-type,html[data-the
     <button class="nav-tab" onclick="showPage('tips')">Tips</button>
   </div>
 
-  <div class="nav-right">
-    </div>
+<div class="nav-right">
+    <a href="https://chineme-eng.github.io/KatsPortfolio/" target="_blank" class="nav-cta">More Tools ↗</a>
+  </div>
 </nav>
 
 <button class="floating-theme-btn" onclick="toggleTheme()" id="themeBtn">Dark mode</button>
